@@ -48,6 +48,7 @@ Authentication backend that checks credentials with a LDAP server.
 
 """
 import ssl
+import urllib.parse
 from typing import Tuple
 
 from radicale import auth, config
@@ -280,7 +281,7 @@ class Auth(auth.BaseAuth):
                 verifyMode = {"NONE": ssl.CERT_NONE,
                               "OPTIONAL": ssl.CERT_OPTIONAL,
                               "REQUIRED": ssl.CERT_REQUIRED}
-                tls = self.ldap3.Tls(validate=verifyMode[self._ldap_ssl_verify_mode], sni=self._ldap_uri.split("://")[1])
+                tls = self.ldap3.Tls(validate=verifyMode[self._ldap_ssl_verify_mode], sni=urllib.parse.urlparse(self._ldap_uri).hostname)
                 if self._ldap_ssl_ca_file != "":
                     tls = self.ldap3.Tls(validate=verifyMode[self._ldap_ssl_verify_mode], ca_certs_file=self._ldap_ssl_ca_file)
                 if self._ldap_security == "tls":
